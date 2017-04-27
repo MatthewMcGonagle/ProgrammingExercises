@@ -71,11 +71,9 @@ void makeGraph(vector<string>& wordList, wordGraph &graph) {
     // Initialize graph to so that every vertex is a word from wordList
     graph.vertices = vector<vertex>(wordList.size());
 
-    for (wordIt = wordList.begin(), vertexIt = graph.vertices.begin(); wordIt != wordList.end(); wordIt++, vertexIt++){
+    for (wordIt = wordList.begin(), vertexIt = graph.vertices.begin(); wordIt != wordList.end(); wordIt++, vertexIt++)
         vertexIt -> word = *wordIt;
-        // vertexIt -> adjacents = vector<vertex*>(0);
-        // vertexIt -> searchParent = NULL;
-    }
+    
 
     // Loop through to find adjacencies (which is when word distance == 1).
 
@@ -147,15 +145,12 @@ int Solution::ladderLength(string beginWord, string endWord, vector<string>& wor
     while(!toProcess.empty() && !found) {
         current = toProcess.front();
         toProcess.pop();
-        // cout << "After popping, toProcess size = " << toProcess.size() << endl;
 
         // Check if current is the desired endWord. Else process adjacents of current vertex.
         if(current -> word == endWord) 
             found = true;
         else {
-            //cout << "Number adjacents for current = " << current -> word  << " is " << current->adjacents.size() << endl;
             for(adjIt = current -> adjacents.begin(); adjIt != current -> adjacents.end(); adjIt++) {
-                // cout << "Got a NULL" << endl;
                 if( (*adjIt) != startv && (*adjIt) -> searchParent == NULL) {
                     (*adjIt) -> searchParent = current;
                     toProcess.push(*adjIt);
