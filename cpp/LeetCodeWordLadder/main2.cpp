@@ -31,13 +31,14 @@ int main() {
 
 int Solution::ladderLength(string beginWord, string endWord, vector<string>& wordList) {
     queue<string*> edgeWords;
-    bool found = false;
+    bool found;
     int length;
     vector<bool> inGraph = vector<bool>(wordList.size(), false);
     vector<bool>::iterator inGraphIt;
     vector<string>::iterator wordIt;
     string *currentInGraph, *lengthChange, *nextLengthChange;
 
+    found = false;
     edgeWords.push(&beginWord);
     lengthChange = &beginWord;
     length = 0;
@@ -62,7 +63,7 @@ int Solution::ladderLength(string beginWord, string endWord, vector<string>& wor
                 }
            } 
         } 
-        if(currentInGraph == lengthChange) {
+        if(currentInGraph == lengthChange && !found) {
             length++;
             lengthChange = nextLengthChange;
         }
