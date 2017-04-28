@@ -31,22 +31,19 @@ int main() {
 
 int Solution::ladderLength(string beginWord, string endWord, vector<string>& wordList) {
     queue<string*> edgeWords;
-    queue<int> inGraphDistance;
     bool found = false;
-    int currentInDistance;
+    int length;
     vector<bool> inGraph = vector<bool>(wordList.size(), false);
     vector<bool>::iterator inGraphIt;
     vector<string>::iterator wordIt;
-    string *currentInGraph;
+    string *currentInGraph, *lengthChange, *nextLengthChange;
 
     edgeWords.push(&beginWord);
-    inGraphDistance.push(0);
-
+    lengthChange = &beginWord;
+    length = 0;
     while(!edgeWords.empty() && !found) {
         currentInGraph = edgeWords.front();
         edgeWords.pop();
-        currentInDistance = inGraphDistance.front();
-        inGraphDistance.pop();
        
         for( wordIt = wordList.begin(), inGraphIt = inGraph.begin()
            ; wordIt != wordList.end() && !found; wordIt++, inGraphIt++) {
@@ -55,21 +52,27 @@ int Solution::ladderLength(string beginWord, string endWord, vector<string>& wor
 
                 if(*wordIt == endWord) { 
                     found = true;
+                    length++;
                 }
+
                 else {
                     edgeWords.push(&*wordIt);
-                    inGraphDistance.push(currentInDistance + 1);
                     *inGraphIt = true;
+                    nextLengthChange = &*wordIt;
                 }
            } 
         } 
+        if(currentInGraph == lengthChange) {
+            length++;
+            lengthChange = nextLengthChange;
+        }
 
     }
     
     if(!found)
         return 0;
 
-    return currentInDistance + 2; // Count is distance plus two endpoints.
+    return length + 1; // Count is length plus one for the beginWord. 
 }
 
 bool connected(string& x, string& y) {
