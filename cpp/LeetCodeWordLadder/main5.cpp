@@ -22,6 +22,7 @@ class Solution {
         Vertex *beginVertex, *endVertex, *midVertex, dummy;
         bool setUpGraph(string &beginWord, string &endWord, vector<string>& wordList);
         bool connectBeginEnd(Vertex* connected, Vertex* target);
+        bool beginDistClose(int x, int y);
         void findMidVertex();
         int traceDistance();
 };
@@ -123,6 +124,8 @@ bool Solution::setUpGraph(string &beginWord, string &endWord, vector<string> &wo
     bool beginFound = false, endFound = false;
     vector<string>::iterator wordIt;
     vector<Vertex>::iterator vertexIt, vertexJt;
+    vector<int> distanceToBegin;
+    vector<int>::iterator distIt, distJt;
     Vertex temporary;
 
     // Initialize the graph.
@@ -161,16 +164,24 @@ bool Solution::setUpGraph(string &beginWord, string &endWord, vector<string> &wo
     if(!endFound)
         return false;
 
+   // Set up list of distances to beginning vertex.
+
+    distanceToBegin = vector<int>(graph.size());
+    for(vertexIt = graph.begin(), distIt = distanceToBegin.begin(); vertexIt != graph.end(); vertexIt++, distIt++) 
+        *distIt = stringDistance(vertexIt -> word, beginVertex -> word);
+         
    // Set up adjacencies. 
-   for(vertexIt = graph.begin(); vertexIt != graph.end(); vertexIt++) {
+   for(vertexIt = graph.begin(), distIt = distanceToBegin.begin(); vertexIt != graph.end(); vertexIt++, distIt++) {
 
-       for(vertexJt = vertexIt + 1; vertexJt != graph.end(); vertexJt++) {
+       for(vertexJt = vertexIt + 1, distJt = distIt + 1; vertexJt != graph.end(); vertexJt++, distJt++) {
 
-           wordDistance = stringDistance(vertexIt -> word, vertexJt -> word);
-           if(wordDistance == 1) {
+           if(beginDistClose(*distIt, *distJt)) { 
+                wordDistance = stringDistance(vertexIt -> word, vertexJt -> word);
+                if(wordDistance == 1) {
 
-               vertexIt -> adjacents.push_back(&*vertexJt);
-               vertexJt -> adjacents.push_back(&*vertexIt);
+                    vertexIt -> adjacents.push_back(&*vertexJt);
+                    vertexJt -> adjacents.push_back(&*vertexIt);
+                }
            }
        }
    } 
@@ -190,6 +201,14 @@ bool Solution::connectBeginEnd(Vertex *connected, Vertex *target) {
     }
     return false;
 
+}
+
+bool Solution::beginDistClose(int x, int y) {
+
+    if( x < y + 2 && x > y - 2)
+        return true;
+    else
+        return false;
 }
 
 void Solution::findMidVertex() {
