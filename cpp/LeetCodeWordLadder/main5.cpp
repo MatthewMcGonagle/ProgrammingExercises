@@ -15,6 +15,7 @@ class Solution {
     public:
         int ladderLength(string beginWord, string endWord, vector<string>& wordList);
         int stringDistance(string *x, string *y);
+        void printGraph();
 
     private:
         vector<Vertex> graph;
@@ -41,6 +42,8 @@ int main() {
     chainlength = s.ladderLength(string("hit"), string("cog"), wordList);
     //chainlength = s.ladderLength(string("a"), string("c"), wordList);
     cout << "ladder length = " << chainlength << endl;
+
+    s.printGraph();
 
     return 0;
 
@@ -81,6 +84,40 @@ int Solution::stringDistance(string *x, string *y) {
     return numdifference;
 }
 
+void Solution::printGraph() {
+
+    vector<Vertex>::iterator vertexIt;
+    vector<Vertex*>::iterator adjacentIt;
+
+    for(vertexIt = graph.begin(); vertexIt != graph.end(); vertexIt++) {
+        cout << "Vertex: " << *(vertexIt -> word) << endl;
+        cout << "     Adjacents: ";
+        for(adjacentIt = vertexIt -> adjacents.begin(); adjacentIt != vertexIt -> adjacents.end(); adjacentIt++)
+            cout << *(*adjacentIt) -> word << ", ";
+        cout << endl;
+    } 
+    
+    if(beginVertex != NULL) {
+        cout << "Beginning Vertex: " << * beginVertex -> word << endl; 
+        cout << "      Adjacents: ";
+        for(adjacentIt = beginVertex -> adjacents.begin(); adjacentIt != beginVertex -> adjacents.end(); adjacentIt++)
+            cout << *(*adjacentIt) -> word << ", ";
+        cout << endl;
+    }
+    else
+        cout << "Beginning Vertex = NULL" << endl;
+
+    if(endVertex != NULL) {
+        cout << "End Vertex: " << * endVertex -> word << endl; 
+        cout << "      Adjacents: ";
+        for(adjacentIt = endVertex -> adjacents.begin(); adjacentIt != endVertex -> adjacents.end(); adjacentIt++)
+            cout << *(*adjacentIt) -> word << ", ";
+        cout << endl;
+    }
+    else
+        cout << "End Vertex = NULL" << endl;
+}
+
 bool Solution::setUpGraph(string &beginWord, string &endWord, vector<string> &wordList) {
     int graphSize, wordDistance;
     bool beginFound = false, endFound = false;
@@ -98,18 +135,11 @@ bool Solution::setUpGraph(string &beginWord, string &endWord, vector<string> &wo
             beginFound = true;
             beginVertex = &*vertexIt;
         }
-        else if (*wordIt == endWord) {
-            endFound = true;
-            endVertex = &*vertexIt;
-        }
        vertexIt -> beginParent = NULL;
        vertexIt -> endParent = NULL;
+       vertexIt -> adjacents = vector<Vertex*>(0);
     }
    
-   // If no endWord in wordList, then unnecessary to continue. Return false;
-   if(!endFound)
-        return false;
-
    // Add beginning word if necessary.
    if(!beginFound) {
         temporary.word = &beginWord; 
@@ -117,12 +147,23 @@ bool Solution::setUpGraph(string &beginWord, string &endWord, vector<string> &wo
         temporary.endParent = NULL;
         graph.push_back(temporary);
         beginVertex = &*(graph.end()-1);
+        beginVertex -> adjacents = vector<Vertex*>(0);
    }
+
+   for(vertexIt = graph.begin(); vertexIt != graph.end(); vertexIt++) {
+        if(* vertexIt -> word == endWord) {
+            endFound = true;
+            endVertex = &*vertexIt;
+        }
+    }
+
+    // If no endWord in wordList, then unnecessary to continue. Return false;
+    if(!endFound)
+        return false;
 
    // Set up adjacencies. 
    for(vertexIt = graph.begin(); vertexIt != graph.end(); vertexIt++) {
 
-       vertexIt -> adjacents = vector<Vertex*>(0);
        for(vertexJt = vertexIt + 1; vertexJt != graph.end(); vertexJt++) {
 
            wordDistance = stringDistance(vertexIt -> word, vertexJt -> word);
@@ -176,10 +217,12 @@ void Solution::findMidVertex() {
     while(!toProcess.empty() && !found) {
         current = toProcess.front();
         toProcess.pop(); 
+        
         for(vertexIt = current -> adjacents.begin(); vertexIt != current -> adjacents.end(); vertexIt++) {
             target = *vertexIt;
-            if(connectBeginEnd(current, target))
+            if(connectBeginEnd(current, target)) {
                 toProcess.push(target);
+            }
             if(target -> beginParent != NULL && target -> endParent != NULL) {
                 found = true;
                 midVertex = target;
