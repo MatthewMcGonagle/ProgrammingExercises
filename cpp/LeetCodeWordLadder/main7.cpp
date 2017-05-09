@@ -24,7 +24,7 @@ class Solution {
 
     private:
         bool constructGraph(string &beginWord, string &endWord, vector<string> &wordList);
-        void findAdjacents(map<string, Vertex>::iterator mapIt);
+        void findAdjacents(Vertex *vertex);
         void findSpanningTree(Vertex *beginVertex, Vertex *endVertex);
         int traceNumVertices();
 
@@ -129,18 +129,18 @@ bool Solution::constructGraph(string &beginWord, string &endWord, vector<string>
 
     // Set up adjacents.
     for(mapIt = graph.begin(); mapIt != graph.end(); mapIt++) 
-        findAdjacents(mapIt);
+        findAdjacents(& mapIt -> second);
 
     return true;
 }
 
-void Solution::findAdjacents(map<string, Vertex>::iterator vertexIt) {
+void Solution::findAdjacents(Vertex* vertex) {
     string::iterator stringIt;
     string key, possible; 
     map<string, Vertex>::iterator mapIt;
     char currentChar;
 
-    key = vertexIt -> first;
+    key = * vertex -> word;
     possible = key;
 
     // Iterate through possible changes to string.
@@ -154,14 +154,14 @@ void Solution::findAdjacents(map<string, Vertex>::iterator vertexIt) {
             possible.replace(stringIt, stringIt+1, string(1, change));
             mapIt = graph.find(possible);
             if(mapIt != graph.end()) 
-                vertexIt -> second.adjacents.push_back(& mapIt -> second);
+                vertex -> adjacents.push_back(& mapIt -> second);
         }
 
         for(char change = currentChar + 1; change < 'z' + 1; change++) {
             possible.replace(stringIt, stringIt+1, string(1, change));
             mapIt = graph.find(possible);
             if(mapIt != graph.end()) 
-                vertexIt -> second.adjacents.push_back(& mapIt -> second);
+                vertex -> adjacents.push_back(& mapIt -> second);
         }
 
     }
