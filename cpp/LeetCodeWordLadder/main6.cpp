@@ -26,7 +26,7 @@ class Solution {
         bool constructGraph(string &beginWord, string &endWord, vector<string> &wordList);
         void findAdjacents(map<string, Vertex>::iterator mapIt);
         void findSpanningTree(Vertex *beginVertex, Vertex *endVertex);
-        int traceDistance(Vertex* endVertex);
+        int traceNumVertices(Vertex* endVertex);
 
         map<string, Vertex> graph;
 };
@@ -78,11 +78,10 @@ int Solution::ladderLength(string beginWord, string endWord, vector<string> &wor
     findSpanningTree(beginVertex, endVertex);
 
     if(endVertex -> parent == NULL) {
-        cout << "endVertex has no parent" << endl;
         return 0;
     }
 
-    return traceDistance(endVertex);
+    return traceNumVertices(endVertex);
 
 }
 
@@ -174,7 +173,6 @@ void Solution::findSpanningTree(Vertex *beginVertex, Vertex *endVertex) {
     Vertex *current;
     vector<Vertex*>::iterator adjacentIt;
 
-    cout << "beginVertex = " << * beginVertex -> word << endl;
     toProcess.push(beginVertex);
     while(!toProcess.empty() && endVertex -> parent == NULL) {
         current = toProcess.front();
@@ -183,7 +181,6 @@ void Solution::findSpanningTree(Vertex *beginVertex, Vertex *endVertex) {
         for(adjacentIt = current -> adjacents.begin(); adjacentIt != current -> adjacents.end(); adjacentIt++) {
             if( (*adjacentIt) -> parent == NULL) {
                 (*adjacentIt) -> parent = current;
-                cout << "adjacentIt = " << * (*adjacentIt) -> word << endl;
                 toProcess.push(*adjacentIt);
             }
         } 
@@ -193,12 +190,14 @@ void Solution::findSpanningTree(Vertex *beginVertex, Vertex *endVertex) {
     beginVertex -> parent = NULL;
 }
 
-int Solution::traceDistance(Vertex *endVertex) {
+int Solution::traceNumVertices(Vertex *endVertex) {
 
-    int pathdistance = 0;
+    int numVertices= 0;
 
     while(endVertex != NULL) {
         endVertex = endVertex -> parent;
-        pathdistance++;
+        numVertices++;
     }
+
+    return numVertices;
 }
