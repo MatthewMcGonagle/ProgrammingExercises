@@ -27,9 +27,11 @@ int main() {
                 indexVector(indexList, indexList + sizeof(indexList) / sizeof(int));
     vector<int>::iterator labelIt, indexIt;
 
-    RandomListNode *head;
+    RandomListNode *head, *copyHead;
 
     Solution s;
+
+    // Construct Random Linked List using the vectors of labels and indices.
 
     cout << "labelVector = " << endl << "    ";
     for(labelIt = labelVector.begin(), indexIt = indexVector.begin(); labelIt!= labelVector.end(); labelIt++, indexIt++) {
@@ -41,13 +43,57 @@ int main() {
     head = s.constructRandomList(labelVector, indexVector);
     cout << "Random List = " << endl << "     ";
     s.printRandomList(head);
+
+    // Copy Random List
+    
+    copyHead = s.copyRandomList(head);
+    cout << "Copy of Random List = " << endl << "      ";
+    s.printRandomList(copyHead);
+
     s.deleteRandomList(head);
+    s.deleteRandomList(copyHead);
     return 0;
 }
 
 RandomListNode* Solution::copyRandomList(RandomListNode *head) {
 
-    RandomListNode *newhead = new RandomListNode(head -> label);
+    RandomListNode *newhead, *currentOld, *currentNew, *currentChild;
+    map<RandomListNode*, RandomListNode*> addressMap;
+    pair<RandomListNode*, RandomListNode*> addressConversion;
+
+    if(head == NULL)
+        return NULL;
+
+    // Now know that head is non-null. Initialize list without random pointer. For now, set random pointer to address in original list. Also set up address map.
+
+    newhead = new RandomListNode(head -> label);
+    currentOld = head;
+    currentNew = newhead;
+    currentNew -> random = currentOld -> random;
+    addressConversion = pair<RandomListNode*, RandomListNode*> (currentOld, currentNew);
+    addressMap.insert(addressConversion);
+
+    while(currentOld -> next != NULL) {
+        currentChild = new RandomListNode(currentOld -> next -> label);
+        currentNew -> next = currentChild; 
+        currentNew = currentChild;
+        currentOld = currentOld -> next;
+
+        currentNew -> random = currentOld -> random;
+        addressConversion = pair<RandomListNode*, RandomListNode*> (currentOld, currentNew);
+        addressMap.insert(addressConversion);
+    }
+
+    // Now add in random pointers.
+
+    currentNew = newhead;
+    while(currentNew != NULL) {
+        if(currentNew -> random != NULL) {
+            addressConversion = *addressMap.find(currentNew -> random);
+            currentNew -> random = addressConversion.second;
+        }
+        currentNew = currentNew -> next;
+    }
 
     return newhead;
 }
