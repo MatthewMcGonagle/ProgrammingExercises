@@ -7,8 +7,9 @@ using namespace std;
 class Solution {
     public:
         double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2);
-    private:
         double findMedianOne(int begin, int end, vector<int>& nums);
+
+    private:
         int findNumToRemove(int begin, int end);
         vector<int> findAroundMedian(int begin, int end, vector<int>& nums);
 };
@@ -18,7 +19,8 @@ int main() {
     int list1[] = {0, 2, 4, 5, 6},
         list2[] = {1, 2, 2, 3, 3, 4, 5, 6, 7, 8};
     vector<int> vector1 = vector<int>(list1, list1 + sizeof(list1) / sizeof(int)),
-                vector2 = vector<int>(list2, list2 + sizeof(list2) / sizeof(int)); 
+                vector2 = vector<int>(list2, list2 + sizeof(list2) / sizeof(int)),
+                vector3; 
     vector<int>::iterator vectIt;
     Solution s;
 
@@ -32,7 +34,18 @@ int main() {
         cout << *vectIt << ", ";
     cout << endl;
 
-    cout << "Median of both vectors = " << s.findMedianSortedArrays(vector1, vector2) << endl;
+    cout << "Median of both vectors using Solution class = " << s.findMedianSortedArrays(vector1, vector2) << endl;
+
+    vector3 = vector1;
+    for(int i = 0; i < vector2.size(); i++)
+        vector3.push_back(vector2[i]);
+    sort(vector3.begin(), vector3.end());
+    cout << "Combined Vectors vector3 = ";
+    for(vectIt = vector3.begin(); vectIt != vector3.end(); vectIt++)
+        cout << *vectIt << ", ";
+    cout << endl;
+
+    cout << "True Median of combined = " << s.findMedianOne(0, vector3.size(), vector3) << endl;
     return 0;
 }
 
@@ -95,7 +108,7 @@ double Solution::findMedianOne(int begin, int end, vector<int>& nums) {
     if(size == 1)
         return nums[begin];
     else if (size % 2 == 1)
-        return size / 2;
+        return nums[size / 2];
     else 
         return (nums[size / 2] + nums[size / 2 + 1]) / 2.0; 
         
