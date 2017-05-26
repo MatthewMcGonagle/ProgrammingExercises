@@ -12,12 +12,17 @@ class Solution {
     private:
         int findNumToRemove(int begin, int end);
         vector<int> findAroundMedian(int begin, int end, vector<int>& nums);
+        void printList(int begin, int end, vector<int>& nums);
 };
 
 int main() {
 
-    int list1[] = {0, 2, 4, 5, 6},
-        list2[] = {1, 2, 2, 3, 3, 4, 5, 6, 7, 8};
+    // int list1[] = {0, 2, 4, 5, 6},
+    //     list2[] = {1, 2, 2, 3, 3, 4, 5, 6, 7, 8};
+    // int list1[] = {1,2},
+    //     list2[] = {3,4};
+    int list1[] = {1, 2, 3, 7, 8},
+        list2[] = {4, 5, 6, 9, 10};
     vector<int> vector1 = vector<int>(list1, list1 + sizeof(list1) / sizeof(int)),
                 vector2 = vector<int>(list2, list2 + sizeof(list2) / sizeof(int)),
                 vector3; 
@@ -60,13 +65,19 @@ double Solution::findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) 
     end1 = nums1.size(); 
     end2 = nums2.size(); 
 
+    // If either list is empty, then get the median of the other one.
+
     if (end1 == 0)
         return findMedianOne(begin2, end2, nums2);
 
     if (end2 == 0)
         return findMedianOne(begin1, end1, nums1);
 
+
+    // Reduce to smaller problem until one of the lists is of size two or less.
+
     while(end1 - begin1 > 2 && end2 - begin2 > 2) {
+
         med1 = findMedianOne(begin1, end1, nums1);
         med2 = findMedianOne(begin2, end2, nums2);
         if( end1 - begin1 < end2 - begin2)
@@ -102,15 +113,19 @@ double Solution::findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) 
 
 double Solution::findMedianOne(int begin, int end, vector<int>& nums) {
 
-    int size;
+    int size, pos;
 
     size = end - begin;
     if(size == 1)
         return nums[begin];
-    else if (size % 2 == 1)
-        return nums[size / 2];
-    else 
-        return (nums[size / 2] + nums[size / 2 + 1]) / 2.0; 
+    else if (size % 2 == 1) {
+        pos = begin + size / 2;
+        return nums[pos];
+    }
+    else { 
+        pos = begin + size / 2;
+        return (nums[pos] + nums[pos - 1]) / 2.0; 
+    }
         
 }
 
@@ -148,4 +163,12 @@ vector<int> Solution::findAroundMedian(int begin, int end, vector<int>& nums) {
     }
 
     return smallList;
+}
+
+void Solution::printList(int begin, int end, vector<int>& nums) {
+
+    cout << "Array = ";
+    for(int i = begin; i < end; i++)
+        cout << nums[i] << ", ";
+    cout << endl;
 }
