@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 
+// Speed of this successfull submission varies wildly. Successful submissions have been faster than 11%, 1%, and 69% than all cpp submissions. And this is without changing code.
 using namespace std;
 
 class Solution {
