@@ -25,7 +25,7 @@ int main() {
 
 int Solution::trap(vector<int>& height) {
 
-    int maxVal, lastVal; 
+    int maxVal, lastVal, water, current; 
     vector<int>::iterator heightIt, mPosFirst, mPosLast;
 
     // Take care of trivial case.
@@ -47,6 +47,37 @@ int Solution::trap(vector<int>& height) {
             maxVal = *heightIt;
         }
     }
+
+    // Now do one pass to make increase until first appearance of maximum, constant until last appearance of
+    // maximum, and then decrease after last appearance of maximum.
+
+    water = 0;
+    lastVal = height[0];
+    for(heightIt = height.begin(); heightIt != mPosFirst; heightIt++) {
+        current = *heightIt;
+        if(current < lastVal)
+            water += lastVal - current;
+        else if(current > lastVal)
+            lastVal = current;
+    }
+
+    for(; heightIt != mPosLast; heightIt++) {
+        current = *heightIt;
+        if(current < maxVal)
+            water += maxVal - current;
+    }
+
+    // For this part, iterate backwards from end.
+
+    lastVal = *(height.end() - 1);
+    for(heightIt = height.end()-1; heightIt != mPosLast; heightIt--) {
+        current = *heightIt;
+        if(current < lastVal)
+            water += lastVal - current;
+        else if( current > lastVal)
+            lastVal = current; 
+
+    }
     
-    return 0;
+    return water;
 }
