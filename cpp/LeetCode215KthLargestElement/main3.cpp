@@ -11,7 +11,7 @@ class Solution {
     public:
 
         int findKthLargest(vector<int> &nums, int k);
-        vector<int>::iterator partition(vector<int> &nums, vector<int>::iterator left, vector<int>::iterator right);
+        int partition(vector<int> &nums, int left, int right);
 
     private:
         void printNums(vector<int> &nums);
@@ -43,53 +43,51 @@ int main() {
 
 int Solution::findKthLargest(vector<int> &nums, int k) {
 
-    vector<int>::iterator pivot, begin, end;
-    int pIndex;
+    int pivot, begin, end;
 
     // Do partial quicksort into descending order around k-1 position.
 
-    begin = nums.begin();
-    end = nums.end();
+    begin = 0; 
+    end = nums.size();
     do {
 
         pivot = partition(nums, begin, end);
     
-        pIndex = pivot - nums.begin();
-
-        if ( pIndex < k - 1 ) 
+        if ( pivot < k - 1 ) 
             begin = pivot + 1;
 
-        else if ( pIndex > k - 1) 
+        else if ( pivot > k - 1) 
             end = pivot;
 
 
-    } while (pIndex != k - 1);
+    } while (pivot != k - 1);
 
-    return (*pivot);
+    return nums[pivot];
 }
 
-vector<int>::iterator Solution::partition(vector<int> &nums, vector<int>::iterator left, vector<int>::iterator right) {
+int Solution::partition(vector<int> &nums, int left, int right) {
     
-    int temp, pValue;
-    vector<int>::iterator lastLeftPart, numsIt;
+    int temp, pValue, lastLeftPart;
+    vector<int>::iterator numsIt, endIt;
 
     // Use nums[left] as pivot.
 
-    pValue = *left;
+    pValue = nums[left];
     lastLeftPart = left;
-    for(numsIt = left + 1; numsIt != right; numsIt++) {
+    endIt = nums.begin() + right;
+    for(numsIt = nums.begin() + left + 1; numsIt != endIt; numsIt++) {
        if(*numsIt > pValue){
             // Increment left partition endpoint and swap value there with nums[i].
             lastLeftPart++;
             temp = *numsIt;
-            *numsIt = *lastLeftPart;
-            *lastLeftPart = temp;
+            *numsIt = nums[lastLeftPart];
+            nums[lastLeftPart] = temp;
        } 
     }
     
     // Now swap nums[left] and nums[lastLeftPart].
-    *left = *lastLeftPart;
-    *lastLeftPart = pValue;
+    nums[left] = nums[lastLeftPart];
+    nums[lastLeftPart] = pValue;
 
     return lastLeftPart;
 }
