@@ -11,7 +11,7 @@ class Solution {
     public:
 
         int findKthLargest(vector<int> &nums, int k);
-        int partition(vector<int> &nums, int left, int right);
+        vector<int>::iterator partition(vector<int> &nums, vector<int>::iterator left, vector<int>::iterator right);
 
     private:
         void printNums(vector<int> &nums);
@@ -20,7 +20,7 @@ class Solution {
 
 int main() {
 
-    int numArray[] = {5, 5, 5, 2, 4, 5};
+    int numArray[] = {5, 3, 3, 2, 4, 2};
     int k = 2;
     vector<int> numVector(numArray, numArray + sizeof(numArray) / sizeof(int));
     Solution s;
@@ -43,48 +43,53 @@ int main() {
 
 int Solution::findKthLargest(vector<int> &nums, int k) {
 
-    int pivot, begin, end;
+    vector<int>::iterator pivot, begin, end;
+    int pIndex;
 
     // Do partial quicksort into descending order around k-1 position.
 
-    begin = 0;
-    end = nums.size();
+    begin = nums.begin();
+    end = nums.end();
     do {
 
         pivot = partition(nums, begin, end);
+    
+        pIndex = pivot - nums.begin();
 
-        if ( pivot < k - 1 ) 
+        if ( pIndex < k - 1 ) 
             begin = pivot + 1;
 
-        else if ( pivot > k - 1) 
+        else if ( pIndex > k - 1) 
             end = pivot;
 
-    } while (pivot != k - 1);
 
-    return nums[pivot];
+    } while (pIndex != k - 1);
+
+    return (*pivot);
 }
 
-int Solution::partition(vector<int> &nums, int left, int right) {
+vector<int>::iterator Solution::partition(vector<int> &nums, vector<int>::iterator left, vector<int>::iterator right) {
     
-    int lastLeftPart, temp, pValue;
+    int temp, pValue;
+    vector<int>::iterator lastLeftPart, numsIt;
 
     // Use nums[left] as pivot.
 
-    pValue = nums[left];
+    pValue = *left;
     lastLeftPart = left;
-    for(int i = left + 1; i < right; i++) {
-       if(nums[i] > pValue){
+    for(numsIt = left + 1; numsIt != right; numsIt++) {
+       if(*numsIt > pValue){
             // Increment left partition endpoint and swap value there with nums[i].
             lastLeftPart++;
-            temp = nums[i];
-            nums[i] = nums[lastLeftPart];
-            nums[lastLeftPart] = temp;
+            temp = *numsIt;
+            *numsIt = *lastLeftPart;
+            *lastLeftPart = temp;
        } 
     }
     
     // Now swap nums[left] and nums[lastLeftPart].
-    nums[left] = nums[lastLeftPart];
-    nums[lastLeftPart] = pValue;
+    *left = *lastLeftPart;
+    *lastLeftPart = pValue;
 
     return lastLeftPart;
 }
