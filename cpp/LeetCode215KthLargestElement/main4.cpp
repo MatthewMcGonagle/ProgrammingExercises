@@ -17,12 +17,13 @@ class Solution {
 
         void addNotFull(vector<int> &heap, int val);
         void addFull(vector<int> &heap, int val);
+        void printHeap(vector<int> &heap);
 };
 
 int main() {
 
-    int numArray[] = {3,2,3,4,3};
-    int k = 2;
+    int numArray[] = {7,6,5,4,3,2,1};
+    int k = 5;
     vector<int> numVector(numArray, numArray + sizeof(numArray) / sizeof(int));
     Solution s;
 
@@ -55,6 +56,11 @@ int Solution::findKthLargest(vector<int> &nums, int k) {
 
     // Now only add values into heap when greater than top of heap.
 
+    for(; numsIt != nums.end(); numsIt++) {
+        if( *numsIt > heap[0])
+            addFull(heap, *numsIt);
+    }
+ 
     return heap[0];
 
 }
@@ -71,7 +77,7 @@ void Solution::addNotFull(vector<int> &heap, int val) {
 
     while(last > 0 && bubbling) {
 
-        current = last / 2;
+        current = (last + 1) / 2 - 1;
 
         if(heap[current] > heap[last]) {
 
@@ -82,8 +88,10 @@ void Solution::addNotFull(vector<int> &heap, int val) {
         }
         else
             bubbling = false;
+
+        last = current;
     }
-    
+
 }
 
 // Add value into heap when it is full. Should only be called if value is greater than top of heap.
@@ -92,11 +100,66 @@ void Solution::addNotFull(vector<int> &heap, int val) {
 
 void Solution::addFull(vector<int> &heap, int value) {
 
-    int current, lchild, temp;
+    int current, lchild, temp, rchild;
     bool bubbling;
-
 
     heap[0] = value;
     current = 0;
+    lchild = 2 * (current + 1) - 1;
+    bubbling = true;
+
+    while(lchild < heap.size() && bubbling) {
+        
+        rchild = lchild + 1;
+        // Check to see if right child is in range of heap
+        if( rchild < heap.size()) {
+       
+            // Bubble up the least of current, left child, and right child. 
+            if( heap[current] > heap[lchild] && heap[lchild] < heap[rchild] ) {
+                //Swap current and left child.
+                temp = heap[current];
+                heap[current] = heap[lchild];
+                heap[lchild] = temp;
+
+                current = lchild;
+            }
+            else if ( heap[current] > heap[rchild] ) {
+                //Swap current and right child.
+                temp = heap[current];
+                heap[current] = heap[rchild];
+                heap[rchild] = temp;
+
+                current = rchild;
+            } 
+            else
+                bubbling = false;
+        }
+
+        // Right child outside of heap range, so it is not in heap. Only
+        // need to look at left child.
+        else {
+            if( heap[current] > heap[lchild] ) {
+                // Swap current and left child.
+                temp = heap[current];
+                heap[current] = heap[lchild];
+                heap[lchild] = temp;
+
+                current = lchild;
+            }
+            else
+                bubbling = false;
+        }
+
+        // Compute left child of new current position.
+        lchild = 2 * (current + 1) - 1;
+    }
     
+}
+
+void Solution::printHeap(vector<int> &heap) {
+    
+    cout << "Heap = ";
+    for(int i = 0; i < heap.size(); i++)
+        cout << heap[i] << ", ";
+    cout << endl;
 }
