@@ -154,13 +154,15 @@ TreeNode* Solution::lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* 
     if(pPath.empty() || qPath.empty())
         return NULL;
 
-    for(int pi = pPath.size()-1; pi >-1; pi--) {
-        for(int qi = qPath.size() - 1; qi > -1; qi--) {
-            if(pPath[pi] == qPath[qi] )
-                return pPath[pi]; 
-        }
+    for(int i = 1; i < pPath.size() && i < qPath.size(); i++) {
+        if(pPath[i] != qPath[i])
+            return pPath[i-1]; 
     }
-    return NULL;
+    if(pPath.size() < qPath.size())
+        return pPath.back();
+    else
+        return qPath.back();
+
 }
 
 void Solution::addToTree(TreeNode* &root, int num) {
