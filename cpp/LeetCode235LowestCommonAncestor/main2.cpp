@@ -133,7 +133,7 @@ TreeNode* Solution::lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* 
         else
             largeOnLeft = false;
 
-        if(smallOnLeft != largeOnLeft)
+        if(smallOnLeft != largeOnLeft && inTree(small, current) && inTree(large, current))
             return current;
         else if (smallOnLeft)
             current = current -> left;
