@@ -3,6 +3,7 @@
 #include<vector>
 #include<queue>
 #include<sstream>
+#include<iostream>
 
 using namespace std;
 
@@ -17,13 +18,14 @@ class Unit {
     public:
 
         Unit(bool x, int y) : isNulls(x), val(y) {} 
+        operator string() const;
         string str();
 
         bool isNulls;
         int val;
 };
 
-Unit newNullUnit() { return Unit(true, 1);}
+Unit newNullUnit(int count = 1) { return Unit(true, count);}
 Unit newIntUnit(int x) { return Unit(false, x);}
 
 class Codec {
@@ -36,6 +38,7 @@ class Codec {
     private:
     
         void serializeUnits(TreeNode* root, vector<Unit> &units);
+        void strToUnits(string data, vector<Unit> &result);
 
 };
 
@@ -50,7 +53,7 @@ int main() {
     int nullVal = -100,
         numsArray[] = {1, 2, 10, 3, -100, 5, 6, 3, 1, -100, 2, 4, -100, 6};
     vector<int> nums = vector<int>(numsArray, numsArray + sizeof(numsArray) / sizeof(int));
-    TreeNode *root;
+    TreeNode *root, *deserialized;
     Codec codec;
     string serialization;
 
@@ -61,11 +64,25 @@ int main() {
     serialization = codec.serialize(root);
     cout << serialization << endl;
 
+    deserialized = codec.deserialize(serialization); 
+    printTree(deserialized);
+
     deleteTree(root);
+    deleteTree(deserialized);
     return 0;
 }
 
 ////////// Function definitions
+
+Unit::operator string() const {
+
+    ostringstream ss;
+
+    if(isNulls)
+        ss << "N";
+    ss << val;
+    return ss.str(); 
+}
 
 string Unit::str() {
 
@@ -98,6 +115,69 @@ string Codec::serialize( TreeNode* root ) {
     
 }
 
+TreeNode* Codec::deserialize(string data) {
+
+    vector<Unit> units;
+    TreeNode *root, *current;
+    queue<TreeNode*> leafnodes;
+    vector<Unit>::iterator iT;
+
+    strToUnits(data, units);
+
+    if(units.size() == 0)
+        return NULL;
+
+    if(units[0].isNulls)
+        return NULL;
+
+    root = new TreeNode(units[0].val);
+    leafnodes.push(root);
+
+    // Loop through handling the left and right children of the current leaves in the queue.
+    iT = units.begin() + 1;
+    while( iT != units.end() ) { 
+
+        current = leafnodes.front();
+        leafnodes.pop();
+
+        if ( iT -> isNulls) {
+
+            current -> left = NULL;
+            if( iT -> val > 1)
+                (iT -> val)--;
+            else
+                iT++;
+        }
+        else {
+
+            current -> left = new TreeNode ( iT -> val );
+            leafnodes.push(current -> left);
+            iT++;
+        }
+
+        if (iT != units.end()) {
+            if ( iT -> isNulls) {
+
+                current -> right = NULL;
+
+                if( iT -> val > 1)
+                    (iT -> val)--;
+                else
+                    iT++;
+            }
+            else {
+
+                current -> right = new TreeNode ( iT -> val );
+                leafnodes.push(current -> right);
+                iT++;
+            }
+
+        }
+    }
+    
+    return root;
+}
+
 void Codec::serializeUnits(TreeNode* root, vector<Unit> &units) {
 
     queue<TreeNode*> toProcess;
@@ -127,6 +207,43 @@ void Codec::serializeUnits(TreeNode* root, vector<Unit> &units) {
             toProcess.push(current -> left);
             toProcess.push(current -> right);
         }
+
+    }
+}
+
+// Build up a vector array of Units from correctly serialized string.
+
+void Codec::strToUnits(string data, vector<Unit> &result) {
+
+    stringstream ss(data);
+    char peekchar;
+    int val;
+
+    while(!ss.eof()) {
+        peekchar = ss.peek();
+        if(peekchar == 'N') {
+            ss.ignore();
+            ss >> val;
+            if(!ss.good()) {
+                cout << "ERROR on parsing nullpointer count." << endl;
+                return;
+            }
+            else
+                result.push_back(newNullUnit(val));
+        }
+        else if (peekchar == ',') 
+            ss.ignore();
+        else if (peekchar == ']')
+            ss.setstate(stringstream::eofbit);
+        else {
+            ss >> val;
+            if( !ss.good()) {
+                cout << "ERROR on parsing numerical unit." << endl;
+                return;
+            }
+            else
+                result.push_back(newIntUnit(val));
+        } 
 
     }
 }
