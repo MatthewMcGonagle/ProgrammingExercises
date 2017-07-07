@@ -1,4 +1,5 @@
 // Solution that only keeps track of null-pointers that need to be changed to a non-null value. That is, we only keep track of non-emtpy nodes. Instead of using a regular uniform separating character such as  ',' we will use ending characters either denoting a two non-empty children, only left non-empty child, only right non-empty child, or a leaf (two empty children). We can do this by using queues of pointers to pointers.
+// Passes with beating 89.06% of all cpp submissions.
 #include<iostream>
 #include<string>
 #include<vector>
