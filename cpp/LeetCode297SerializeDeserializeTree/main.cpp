@@ -142,11 +142,11 @@ TreeNode* Codec::deserialize(string data) {
 
         if ( iT -> isNulls) {
 
-            current -> left = NULL;
-            if( iT -> val > 1)
-                (iT -> val)--;
-            else
+            // Check special case of being the last element. If so, then we can prematureley end.
+            if( iT == units.end() - 1 || iT -> val == 1)
                 iT++;
+            else 
+                (iT -> val)--;
         }
         else {
 
@@ -158,12 +158,10 @@ TreeNode* Codec::deserialize(string data) {
         if (iT != units.end()) {
             if ( iT -> isNulls) {
 
-                current -> right = NULL;
-
-                if( iT -> val > 1)
-                    (iT -> val)--;
-                else
+                if( iT == units.end() - 1 || iT -> val == 1)
                     iT++;
+                else
+                    (iT -> val)--;
             }
             else {
 
