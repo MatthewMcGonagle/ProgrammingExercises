@@ -99,7 +99,7 @@ string Codec::serialize( TreeNode* root ) {
     vector<Unit> serialUnits;
 
     if(root == NULL)
-        return string("N");
+        return string("]");
   
     serializeUnits(root, serialUnits);
 
