@@ -26,21 +26,21 @@ class Solution {
    
         cornerNode *start; 
         bool edgesFull;
-        int n;
+        int m, n;
 };
 
 void printNodes(cornerNode* base);
 
 int main() {
 
-    const int n = 5;
     int rowN, maxSize;
-    char numArray[n][n] = { {1, 0, 1, 0, 0},
-                            {1, 0, 1, 1, 1},
-                            {1, 1, 1, 1, 1},
-                            {1, 0, 0, 1, 0},
-                            {0, 0, 0, 0, 0}};
-    vector<vector<char> > matrix(n);
+    const int m = 4, n = 5;
+    char numArray[m][n+1] = {"10100",
+                           "10111",
+                           "11111",
+                           "10010"};
+                                
+    vector<vector<char> > matrix(m);
     Solution s;
    
     rowN = 0; 
@@ -66,7 +66,12 @@ int Solution::maximalSquare(vector<vector<char> > &matrix) {
 
     int size = 0;
 
-    n = matrix.size();
+    m = matrix.size();
+    if( m > 0)
+        n = matrix.begin() -> size();
+    else
+        n = 0;
+
     initializeCorners(matrix);
 
     size = 0;
@@ -100,7 +105,7 @@ void Solution::initializeCorners(vector<vector<char> > &matrix) {
 
         colN = 0;
         for(valIt = rowIt -> begin(); valIt != rowIt -> end(); valIt++, colN++) {
-            if (*valIt == 1) {
+            if (*valIt == '1') {
                 current -> next = new cornerNode(rowN, colN);
                 current = current -> next; 
             }
@@ -144,19 +149,19 @@ void Solution::checkEdges(vector<vector<char> > &matrix, cornerNode *corner, int
         edgesFull = false;
         return;
     }
-    if ( corner-> i + size - 1 >= n) {
+    if ( corner-> i + size - 1 >= m) {
         edgesFull = false;
         return;
     }
     
     for(i = corner -> i; i < corner -> i + size; i++)
-        if(matrix[i][j] == 0) {
+        if(matrix[i][j] == '0') {
             edgesFull = false;
             return;
         }
 
     i = corner -> i + size - 1;
-    if (i >= n) {
+    if (i >= m) {
         edgesFull = false;
         return;
     }
@@ -168,7 +173,7 @@ void Solution::checkEdges(vector<vector<char> > &matrix, cornerNode *corner, int
     // Note, we don't need to check the corner again, so bound is one less than
     // that for the loop of i above.
     for ( j = corner -> j; j < corner -> j + size - 1; j++)
-        if(matrix[i][j] == 0) {
+        if(matrix[i][j] == '0') {
             edgesFull = false;
             return;
         }
