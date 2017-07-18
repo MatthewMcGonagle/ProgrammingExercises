@@ -44,14 +44,14 @@ void printSubmatrix(int corneri, int cornerj, vector<vector<char> > &matrix, int
 int main() {
 
     int maxSize;
-    // const int m = 4, n = 5;
-    // char strings[m][n+1]  = {"10111",
-    //                          "11011",
-    //                          "11101",
-    //                          "11111"};
-    const int m = 2, n = 2;
-    char strings[m][n+1] = {"11",
-                            "11"};
+    const int m = 4, n = 5;
+    char strings[m][n+1]  = {"10111",
+                             "11011",
+                             "11101",
+                             "11111"};
+    // const int m = 2, n = 2;
+    // char strings[m][n+1] = {"11",
+    //                         "11"};
     vector<vector<char> > matrix(m);
     Solution s;
 
@@ -122,13 +122,23 @@ int Solution::maxLengthRow(vector<char> &row) {
 
 void Solution::checkSquaresInEdge(int corneri, int cornerj, vector<vector<char> > &matrix, int length) {
 
+    int fillCount = 0;
+
     newSquaresFound = false; 
 
-    for(int j = cornerj; j < matrix[corneri].size() - length + 1; j++)
-        if(isSquare(corneri, j, matrix, length) ) {
+    for(int j = cornerj; j < matrix[corneri].size(); j++) {
+
+        if(matrix[corneri][j] == '1' && fillCount < length)
+            fillCount++;
+        else if (matrix[corneri][j] == '0')
+            fillCount = 0;
+
+        if(fillCount == length && isSquare(corneri, j - length + 1, matrix, length)) {
             newSquaresFound = true;
             return;
         }
+
+    }
 
 }
 
