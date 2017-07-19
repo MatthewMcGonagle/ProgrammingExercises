@@ -30,18 +30,18 @@ void printMatrix(vector<vector<T> > &matrix);
 
 int main() {
 
-    // const int m = 4, n = 5;
-    // char stringArray[m][n+1] = {"10101",
-    //                             "11101",
-    //                             "11110",
-    //                             "11111"};
+    const int m = 4, n = 5;
+    char stringArray[m][n+1] = {"10101",
+                                "11101",
+                                "11110",
+                                "11111"};
     // const int m = 4, n = 1;
     // char stringArray[m][n+1] = {"1", "0", "0", "0"};
     // const int m = 1, n = 4;
     // char stringArray[m][n+1] = {"0000"};
-    const int m = 2, n = 4;
-    char stringArray[m][n+1] = {"0000",
-                                "0001"};
+    // const int m = 2, n = 4;
+    // char stringArray[m][n+1] = {"0000",
+    //                             "0001"};
     vector<vector<char> > matrix(m);
     Solution s;
     int maxArea;
@@ -145,39 +145,39 @@ void Solution::initLastRow(vector<vector<char> > &matrix, vector<int> &lastRow) 
 
 void Solution::computeRow(vector<int> &lastRow, vector<char> &newRow) {
 
-    vector<int> newVals = vector<int>(lastRow.size());
-    vector<int>::iterator lastIt, valsIt;
+    vector<int>::iterator lastIt;
     vector<char>::iterator newIt;
-    int newVal;
+    int upleft, newVal;
 
-    // Initialize first value of newVals.
+    // Initialize values. 
+    upleft = *lastRow.begin();
 
     if(*newRow.begin() == EMPTY)
-        *newVals.begin() = 0;
+        *lastRow.begin() = 0;
     else {
-        *newVals.begin() = 1;
+        *lastRow.begin() = 1;
         if (maxLength < 1)
             maxLength = 1;
     }
 
-    // newIt points to lower right. lastIt points to upperleft. valsIt points to lower left. 
+    // lastIt points to upper right, newIt points to lower right. Replace *lastIt with new value.
 
-    for( lastIt = lastRow.begin(), newIt = newRow.begin() + 1, valsIt = newVals.begin();
-         lastIt != lastRow.end() - 1; 
-         lastIt++, newIt++, valsIt++) {
+    for( lastIt = lastRow.begin() + 1, newIt = newRow.begin() + 1;
+         lastIt != lastRow.end(); 
+         lastIt++, newIt++) {
         
-         if(*newIt == EMPTY)
-            *(valsIt + 1) = 0;
+         if(*newIt == EMPTY) 
+            newVal = 0;
 
          else { 
-            newVal = computeVal(*lastIt, *(lastIt+1), *valsIt);
+            newVal = computeVal(upleft, *lastIt, *(lastIt-1));
             if(newVal > maxLength)
                 maxLength = newVal;
-            *(valsIt + 1) = newVal; 
          }
+         upleft = *lastIt;
+         *lastIt = newVal;
     }
 
-    lastRow = newVals;   
 }
 
 int Solution::computeVal(int upleft, int upright, int lowleft) {
