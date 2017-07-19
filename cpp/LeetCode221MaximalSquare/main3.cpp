@@ -34,11 +34,24 @@ template void printMatrix<int>(vector<vector<int> > &matrix);
 int main() {
 
     int maxSize;
-    const int m = 4, n = 5;
-    char strings[m][n+1]  = {"10111",
-                             "11011",
-                             "11101",
-                             "11111"};
+    // This case failed on Leetcode as giving 1 as the area, but
+    // it seems to return 0 on my machine.
+    const int m = 4, n = 3;
+    char strings[m][n+1] = {"000",
+                            "000",
+                            "000",
+                            "000"};
+
+    // const int m = 4, n = 5;
+    // char strings[n][n+1] = {"00000",
+    //                         "00000",
+    //                         "00000",
+    //                         "00000"};
+   
+    // char strings[m][n+1]  = {"10111",
+    //                          "11011",
+    //                          "11101",
+    //                          "11111"};
     // const int m = 2, n = 2;
     // char strings[m][n+1] = {"11",
     //                         "11"};
