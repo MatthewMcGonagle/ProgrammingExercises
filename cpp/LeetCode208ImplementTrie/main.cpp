@@ -76,10 +76,11 @@ void printTrieDebug(TrieNode *t);
 int main() {
 
     const char *trieWordsInit[] = {"apple", "orange", "appropriate", "apply", "opal", "apples"},
-               *searchWordsInit[] = {"ace", "apple", "banana", "application", "opal"};
+               *searchWordsInit[] = {"ace", "apple", "banana", "application", "opal", "apples", "oranges", "acer", "app"};
     vector<string> trieWords(trieWordsInit, trieWordsInit + sizeof(trieWordsInit) / sizeof(char*)),
                    searchWords(searchWordsInit, searchWordsInit + sizeof(searchWordsInit) / sizeof(char*));
     Trie t;
+    bool wordFound;
 
     cout << "Words to put into trie are:" << endl;
     myPrint(trieWords);
@@ -92,6 +93,18 @@ int main() {
 
     cout << "The trie tree is:" << endl;
     t.print();
+
+    cout << "The results of searching are" << endl;
+    for(vector<string>::iterator wordIt = searchWords.begin(); wordIt != searchWords.end(); wordIt++) {
+        cout << *wordIt << " = ";
+        wordFound = t.search(*wordIt);
+        if(wordFound)
+            cout << "true";
+        else
+            cout << "false";
+        cout << ", ";
+    }
+    cout << endl;
 
     return 1;
 
@@ -129,7 +142,28 @@ void Trie::insert(string word) {
 
 bool Trie::search(string word) {
 
-    return false;
+    TrieNode *current = root;
+    string::iterator charIt;
+    map<char, TrieNode*>::iterator nextNodeIt;
+
+    // Make sure word is contained in the trie.
+    for( charIt = word.begin(); charIt != word.end(); charIt++) {
+
+        nextNodeIt = current -> children . find(*charIt);
+
+        if (nextNodeIt == current -> children . end() ) 
+            return false;
+
+        else 
+            current = nextNodeIt -> second;
+    }
+
+    // The pointer current should now be pointing to an end node if word is actually a key instead of just
+    // a prefix.
+    if (current -> isEnd)
+        return true;
+    else
+        return false;
 
 }
 
