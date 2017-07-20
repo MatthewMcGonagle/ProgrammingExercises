@@ -11,6 +11,9 @@ using namespace std;
 struct TrieNode {
 
     map<char, TrieNode*> children;
+    bool isEnd;
+
+    TrieNode() : isEnd(false), children() {}
 };
 
 class Trie {
@@ -72,7 +75,7 @@ void printTrieDebug(TrieNode *t);
 
 int main() {
 
-    const char *trieWordsInit[] = {"apple", "orange", "appropriate", "apply", "opal"},
+    const char *trieWordsInit[] = {"apple", "orange", "appropriate", "apply", "opal", "apples"},
                *searchWordsInit[] = {"ace", "apple", "banana", "application", "opal"};
     vector<string> trieWords(trieWordsInit, trieWordsInit + sizeof(trieWordsInit) / sizeof(char*)),
                    searchWords(searchWordsInit, searchWordsInit + sizeof(searchWordsInit) / sizeof(char*));
@@ -154,6 +157,7 @@ void Trie::insertMissing(string::iterator begin, string::iterator end, TrieNode*
         missing = newNode;
 
     }
+    missing -> isEnd = true;
 }
 
 void printTrie(TrieNode *t) {
@@ -176,7 +180,12 @@ void printTrie(TrieNode *t) {
             cout << "_ ";
 
         for(childrenIt = current -> children.begin(); childrenIt != current -> children.end(); childrenIt++) {
-            cout << childrenIt -> first << " ";
+            cout << childrenIt -> first;
+            if (childrenIt -> second -> isEnd)
+                cout << "E";
+            else
+                cout << " ";
+            cout  <<  " ";
             toPrint.push(childrenIt -> second);
         }
 
@@ -212,8 +221,10 @@ void printTrieDebug(TrieNode* t) {
             cout << "Empty";
         else {
             for(childIt = current->children.begin(); childIt != current -> children.end(); childIt++) {
-                cout << "(" << childIt -> first 
-                     << ", " << childIt -> second << ") ";
+                cout << "(" << childIt -> first;
+                if (childIt -> second -> isEnd)
+                    cout << " E"; 
+                cout << ", " << childIt -> second << ") ";
                 toPrint.push(childIt -> second);
             }
         }
