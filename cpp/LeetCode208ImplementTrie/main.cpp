@@ -30,7 +30,7 @@ class Trie {
         
         TrieNode* root, * searchPoint;
         bool stringFound;
-        void insertMissing(string::iterator begin, string::iterator end, TrieNode* missing);
+        TrieNode* insertMissing(string::iterator begin, string::iterator end, TrieNode* missing);
         void searchString(string &word);
 };
 
@@ -77,8 +77,11 @@ void printTrieDebug(TrieNode *t);
 
 int main() {
 
-    const char *trieWordsInit[] = {"apple", "orange", "appropriate", "apply", "opal", "apples"},
-               *searchWordsInit[] = {"ace", "apple", "banana", "application", "opal", "apples", "oranges", "acer", "app"};
+    // Correct output = {null, null, true, false, null, true, null, true}
+    const char *trieWordsInit[] = {"abc", "ab", "ab"},
+               *searchWordsInit[] = {"abc", "ab"};
+    // const char *trieWordsInit[] = {"apple", "orange", "appropriate", "apply", "opal", "apples"},
+    //            *searchWordsInit[] = {"ace", "apple", "banana", "application", "opal", "apples", "oranges", "acer", "app"};
     vector<string> trieWords(trieWordsInit, trieWordsInit + sizeof(trieWordsInit) / sizeof(char*)),
                    searchWords(searchWordsInit, searchWordsInit + sizeof(searchWordsInit) / sizeof(char*));
     Trie t;
@@ -139,12 +142,12 @@ void Trie::insert(string word) {
             stillSearching = false;
 
             // Add children for the rest of word.
-            insertMissing(charIt, word.end(), current);
+            current = insertMissing(charIt, word.end(), current);
         } 
         else
             current = nextChildIt -> second;
     }
-
+    current -> isEnd = true;
 
 }
 
@@ -188,7 +191,8 @@ void Trie::print() {
 
 }
 
-void Trie::insertMissing(string::iterator begin, string::iterator end, TrieNode* missing) {
+// Afer insertion is done, insertMissing returns a pointer to the terminal node.
+TrieNode* Trie::insertMissing(string::iterator begin, string::iterator end, TrieNode* missing) {
 
     string::iterator charIt;
     TrieNode *newNode;
@@ -200,7 +204,7 @@ void Trie::insertMissing(string::iterator begin, string::iterator end, TrieNode*
         missing = newNode;
 
     }
-    missing -> isEnd = true;
+    return missing;
 }
 
 
