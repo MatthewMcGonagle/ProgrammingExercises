@@ -28,8 +28,10 @@ class Trie {
 
     private:
         
-        TrieNode* root;
+        TrieNode* root, * searchPoint;
+        bool stringFound;
         void insertMissing(string::iterator begin, string::iterator end, TrieNode* missing);
+        void searchString(string &word);
 };
 
 // Debug functions.
@@ -93,16 +95,22 @@ int main() {
 
     cout << "The trie tree is:" << endl;
     t.print();
-
+    cout << endl;
+    
+    cout << std::boolalpha;
     cout << "The results of searching are" << endl;
     for(vector<string>::iterator wordIt = searchWords.begin(); wordIt != searchWords.end(); wordIt++) {
         cout << *wordIt << " = ";
         wordFound = t.search(*wordIt);
-        if(wordFound)
-            cout << "true";
-        else
-            cout << "false";
-        cout << ", ";
+        cout << wordFound << ", ";
+    }
+    cout << endl;
+
+    cout << "The results for searching prefixes are" << endl;
+    for(vector<string>::iterator wordIt = searchWords.begin(); wordIt != searchWords.end(); wordIt++) {
+        cout << *wordIt << " = ";
+        wordFound = t.startsWith(*wordIt);
+        cout << wordFound << ", ";
     }
     cout << endl;
 
@@ -142,25 +150,24 @@ void Trie::insert(string word) {
 
 bool Trie::search(string word) {
 
-    TrieNode *current = root;
-    string::iterator charIt;
-    map<char, TrieNode*>::iterator nextNodeIt;
-
     // Make sure word is contained in the trie.
-    for( charIt = word.begin(); charIt != word.end(); charIt++) {
+    searchString(word);
+    if(!stringFound)
+        return false;
+    // for( charIt = word.begin(); charIt != word.end(); charIt++) {
 
-        nextNodeIt = current -> children . find(*charIt);
+    //     nextNodeIt = current -> children . find(*charIt);
 
-        if (nextNodeIt == current -> children . end() ) 
-            return false;
+    //     if (nextNodeIt == current -> children . end() ) 
+    //         return false;
 
-        else 
-            current = nextNodeIt -> second;
-    }
+    //     else 
+    //         current = nextNodeIt -> second;
+    // }
 
     // The pointer current should now be pointing to an end node if word is actually a key instead of just
     // a prefix.
-    if (current -> isEnd)
+    if (searchPoint -> isEnd)
         return true;
     else
         return false;
@@ -170,7 +177,9 @@ bool Trie::search(string word) {
 
 bool Trie::startsWith(string prefix) {
 
-    return false;
+    searchString(prefix);
+    
+    return stringFound;
 }
 
 void Trie::print() {
@@ -193,6 +202,28 @@ void Trie::insertMissing(string::iterator begin, string::iterator end, TrieNode*
     }
     missing -> isEnd = true;
 }
+
+
+void Trie::searchString(string &word) {
+
+    string::iterator charIt;
+    map<char, TrieNode*>::iterator nextNodeIt;
+
+    searchPoint = root;
+
+    // If loop successfully finishes, searchPoint should point to the terminal node.
+    for(charIt = word.begin(); charIt != word.end(); charIt++) {
+        nextNodeIt = searchPoint -> children . find(*charIt);
+        if(nextNodeIt == searchPoint -> children.end() ) {
+            stringFound = false;
+            return;
+        }
+        else 
+            searchPoint = nextNodeIt -> second;
+    }    
+    stringFound = true;
+}
+
 
 void printTrie(TrieNode *t) {
 
@@ -265,3 +296,4 @@ void printTrieDebug(TrieNode* t) {
         cout << endl; 
     }
 }
+
