@@ -27,28 +27,49 @@ class Solution {
 
         map<UndirectedGraphNode*, UndirectedGraphNode*> pointerMap;
         UndirectedGraphNode* allocateNewNodes(UndirectedGraphNode* node);
+        void setNeighbors(UndirectedGraphNode* cloneNode, UndirectedGraphNode *original);
         
 };
 
 UndirectedGraphNode* buildGraph(string symbols); 
 void printGraph(UndirectedGraphNode *node);
+void multiplyGraph(UndirectedGraphNode *node, int scaling);
 
 int main() {
 
     string symbols("0,1,2#1,2#2,2");
     Solution s;
-    UndirectedGraphNode *node;
+    UndirectedGraphNode *node, *clone;
 
     cout << "Symbols = " << symbols << endl;
     node = buildGraph(symbols);
+
+    cout << "Original Graph is " << endl;
     printGraph(node);
+    
+    clone = s.cloneGraph(node);
+    multiplyGraph(node, 10);
+
+    cout << "Multiplied graph is " << endl;
+    printGraph(node);
+    cout << "Cloned original is " << endl;
+    printGraph(clone);
  
     return 1;
 
 }
 
-UndirectedGraphNode* cloneGraph(UndirectedGraphNode *node) {
+UndirectedGraphNode* Solution::cloneGraph(UndirectedGraphNode *node) {
 
+    UndirectedGraphNode *cloneNode;
+
+    if(node == NULL)
+        return NULL;
+
+    cloneNode = allocateNewNodes(node);
+    setNeighbors(cloneNode, node);
+
+    return cloneNode;
 }
 
 UndirectedGraphNode* Solution::allocateNewNodes(UndirectedGraphNode* node) {
@@ -75,13 +96,46 @@ UndirectedGraphNode* Solution::allocateNewNodes(UndirectedGraphNode* node) {
    
         for(nbrIt = current -> neighbors . begin(); nbrIt != current -> neighbors . end(); nbrIt++) {
             mapIt = pointerMap.find(*nbrIt);
-            if(mapIt != pointerMap.end())
+            if(mapIt == pointerMap.end())
                 toProcess.push(*nbrIt);
         } 
 
     }
 
+    return pointerMap.find(node) -> second;
     
+}
+
+void Solution::setNeighbors(UndirectedGraphNode* cloneNode, UndirectedGraphNode *original) {
+
+    set<UndirectedGraphNode*> queued;
+    queue<UndirectedGraphNode *> toProcess;
+    UndirectedGraphNode *clone;
+    map<UndirectedGraphNode*, UndirectedGraphNode*>::iterator lookUp;
+    vector<UndirectedGraphNode*>::iterator origNbrIt;
+
+    toProcess.push(original);
+    queued.insert(original);
+
+    while(!toProcess.empty()) {
+        original = toProcess.front();
+        toProcess.pop();
+
+        lookUp = pointerMap.find(original);
+        clone = lookUp -> second;
+        
+        for(origNbrIt = original -> neighbors . begin(); origNbrIt != original -> neighbors.end(); origNbrIt++) {
+
+            lookUp = pointerMap.find(*origNbrIt);
+            clone -> neighbors.push_back(lookUp -> second);
+            if(queued.count(*origNbrIt) == 0) {
+                toProcess.push(*origNbrIt);
+                queued.insert(*origNbrIt);
+            }
+            
+        } 
+          
+    }
 }
 
 UndirectedGraphNode* buildGraph(string symbols) {
@@ -163,8 +217,10 @@ void printGraph(UndirectedGraphNode *node) {
     UndirectedGraphNode* current;
     vector<UndirectedGraphNode*>::iterator nbrIt;
 
-    if (node == NULL)
+    if (node == NULL) {
         cout << "node is NULL" << endl;
+        return;
+    }
 
     toPrint.push(node);
     alreadyPrinted.insert(current);
@@ -189,4 +245,36 @@ void printGraph(UndirectedGraphNode *node) {
         cout << endl;
     }
     cout << endl;
+}
+
+void multiplyGraph(UndirectedGraphNode *node, int scaling) {
+
+    queue<UndirectedGraphNode *> toScale;
+    set<UndirectedGraphNode*> alreadyScaled;
+    UndirectedGraphNode* current;
+    vector<UndirectedGraphNode*>::iterator nbrIt;
+
+    if (node == NULL)
+        cout << "node is NULL" << endl;
+
+    toScale.push(node);
+    alreadyScaled.insert(current);
+
+    while(!toScale.empty()) {
+
+        current = toScale.front();
+        toScale.pop(); 
+
+        current -> label *= scaling;
+        for(nbrIt = current -> neighbors.begin(); nbrIt != current -> neighbors.end(); nbrIt++) {
+
+            if(alreadyScaled.count(*nbrIt) == 0){
+                toScale.push(*nbrIt);
+                alreadyScaled.insert(*nbrIt);
+            }
+        }
+        cout << endl;
+    }
+    cout << endl;
+
 }
