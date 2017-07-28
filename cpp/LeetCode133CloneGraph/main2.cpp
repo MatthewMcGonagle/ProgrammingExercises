@@ -98,6 +98,7 @@ UndirectedGraphNode* Solution::allocateNewNodes(UndirectedGraphNode* original) {
         toProcess.pop();
 
         newNode = new UndirectedGraphNode(original -> label);
+        newNode -> neighbors . reserve(original -> neighbors.size() + 1);
         newNode -> neighbors . push_back(original);
 
         if(firstNode) {
