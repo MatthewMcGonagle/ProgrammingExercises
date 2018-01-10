@@ -2,3 +2,6 @@
 *~
 *.swp
 *.exe
+
+/docs/_site/
+/docs/Gemfile.lock

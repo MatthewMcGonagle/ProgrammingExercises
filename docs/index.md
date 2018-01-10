@@ -1,4 +1,7 @@
-# Programming Exercises
+---
+layout: default
+title: Programming Exercises
+---
 
 The purpose of this project is to be a collection of solutions to programming exercises.
 The solutions are split into directories based on language.
