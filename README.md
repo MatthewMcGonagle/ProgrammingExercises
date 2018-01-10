@@ -8,4 +8,4 @@ The solutions are self-contained. They will compile to create executables for te
 
 Some of the solutions to the exercises are discussed on my blog; here is a list:
 
-* [C++ Solution for Leet Code 297: Serialize/Deserialize a Binary Tree]({{site . url}}/blog/2017/11/08/CppLeetCode297).
+* [C++ Solution for Leet Code 297: Serialize/Deserialize a Binary Tree](https://matthewmcgonagle.github.io/blog/2017/11/08/CppLeetCode297).
