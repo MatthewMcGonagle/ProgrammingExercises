@@ -5,8 +5,9 @@
     Numbers are represented as a linked list of digits in reverse order. The purpose is to then
     make a function Solution::addTwoNumbers that will find the linked list representation of their sum.
 
-    Current solution passes as faster than 18.71% of all cpp submissions.
+    Current solution passes as faster than amount between 37% and 55% of all cpp submissions.
 **/
+
 #include<iostream> // For testing.
 #include<vector> // For constructing test examples.
 #include<string>
@@ -45,6 +46,30 @@ public:
     **/
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2); 
 
+private:
+
+    /**
+        function doCarry
+
+        Alter the sum of two digits and a carry to find the correct digit here and the
+        carry for the next digit.
+
+        @param sum Reference to the sum of the digits and carry for the current decimal place.
+        @return The new carry.
+    **/
+    inline int doCarry(int &sum);
+
+    /**
+        function carryOneNumber
+
+        Do the carries for when there is only one number left.
+
+        @param head Pointer to the last digit of the sum that these results will be
+            attached to.
+        @param num The list of digits to apply the carries to.
+        @param carry The carry to apply to the first digit.
+    **/
+    void carryOneNumber(ListNode* head, ListNode* num, int carry);
 };
 
 /**
@@ -116,25 +141,33 @@ ListNode* Solution::addTwoNumbers(ListNode* l1, ListNode* l2) {
     dummyHead = new ListNode(0);
     sum = dummyHead; 
 
-    while (l1 != NULL || l2 != NULL || carry != 0) {
+    // Loop over the digits of both numbers until one is done.
+
+    while (l1 != NULL && l2 != NULL) {
 
         sum -> next = new ListNode(0);
         sum = sum -> next;
 
         digit = carry;
-        if (l1 != NULL) {
-            digit += l1 -> val;
-            l1 = l1 -> next;
-        }
-        if (l2 != NULL) {
-            digit += l2 -> val;
-            l2 = l2 -> next;
-        }
-        carry = digit / 10; // Integer division!
-        digit = digit % 10;
 
+        digit += l1 -> val;
+        l1 = l1 -> next;
+        
+        digit += l2 -> val;
+        l2 = l2 -> next;
+
+        carry = doCarry(digit);
         sum -> val = digit;
     }
+
+    // Now check to see if one number still has digits left, else deal with any remaining carry.
+
+    if (l1 != NULL) 
+        carryOneNumber(sum, l1, carry); 
+    else if (l2 != NULL)
+        carryOneNumber(sum, l2, carry);
+    else if (carry > 0) // Just need to add digit of '1'.
+        sum -> next = new ListNode(1);
 
     // Clean up dummyHead.
    
@@ -142,6 +175,46 @@ ListNode* Solution::addTwoNumbers(ListNode* l1, ListNode* l2) {
     delete dummyHead;
  
     return sum;
+}
+
+int Solution::doCarry(int &sum) {
+
+    // Avoid using more costly division and modulo operations.
+
+    // Sum of digits and carry is at most 19 (digit 9 + digit 9 + carry 1).
+    // So cheaper logic tells us the carry operation.
+
+    if (sum > 9) {
+        sum -= 10;
+        return 1;            
+    }
+    else {
+       return 0; 
+    }
+}
+
+void Solution::carryOneNumber(ListNode *head, ListNode* num, int carry) {
+
+    ListNode *newNum = head;
+    int digit;
+
+    while(num != NULL && carry != 0) {
+
+        newNum -> next = new ListNode(0);
+        newNum = newNum -> next;
+
+        digit = num -> val + carry;
+        carry = doCarry(digit);
+        newNum -> val = digit;
+
+        num = num -> next;
+    } 
+
+    if(carry > 0) 
+        newNum -> next = new ListNode(1); 
+    else
+        newNum -> next = num;
+         
 }
 
 ListNode* makeList(unsigned int n) {
