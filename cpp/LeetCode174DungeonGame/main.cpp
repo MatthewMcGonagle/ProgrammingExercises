@@ -20,22 +20,102 @@
 #include<sstream>
 #include<iostream>
 
+/**
+
+    Class for implementing solution to problem. The format of the member function calculateMinimumHP is
+    specified by Leet Code.
+
+**/
+
 class Solution {
 public:
+    /**
+    Calculate the minimuim starting HP of the knight to reach the princess alive for a given dungeon.
+    
+    @param dungeon The table holding the values of health gain/lost in each cell of the dungeon. It is assumed
+        to be a matrix, i.e. each row has the same size.
+    **/
     int calculateMinimumHP(std::vector<std::vector<int> >& dungeon);
 
 private:
-    void useRowBelow(std::vector<int>& boardRow, std::vector<int>& lastRow, std::vector<int>& newMins);
-    void calculateLastRow(std::vector<int>& boardRow, std::vector<int>& newMins); 
+
+    /**
+    Calculate the minimum health needed for each cell in a row given the calculations of the minimums 
+    for the row below. This shouldn't be used to find the minimum for the bottom row.
     
-    inline int getMinOneMove(int board, int lastRow); 
-    inline int getMinTwoMoves(int board, int below, int right);
+    @param boardRow The row on the board we are calculating for.
+    @param rowBelow The minimum values for the row below. 
+    @param newMins A vector to hold the calculated minimum values for the current row.
+    **/
+    void useRowBelow(std::vector<int>& boardRow, std::vector<int>& rowBelow, std::vector<int>& newMins);
+
+    /**
+    Calculate the minimum health needed for the last row.
+
+    @param boardRow The last row on the board.
+    @param newMins A vector to hold the calculated minimum values for the last row.
+    **/
+    void calculateLastRow(std::vector<int>& boardRow, std::vector<int>& newMins); 
+   
+    /**
+    Find the minimum HP needed for one position given only one possible move.
+
+    @param board The health gain/loss on the board for the current position.
+    @param moveMin The minimum HP of the only spot that can be moved to. 
+    @returns The minimum for the board position.
+    **/ 
+    inline int getMinOneMove(int board, int moveMin); 
+
+    /**
+    Find the minimum HP needed for a position when there are two possible moves.
+
+    @param board The health gain/loss on the board for the current position.
+    @param moveMin1 The minimum HP needed for the first possible move.
+    @param moveMin2 The minimum HP needed for the secondn possible move. 
+    @returns The minimum for the board position.
+    **/
+    inline int getMinTwoMoves(int board, int moveMin1, int moveMin2);
+
+    /**
+    Simple switch of row indices for storing calculated minimums. Each index is 
+    either 0 or 1, so calculation is simplified.
+    
+    @param a The first index.
+    @param b The second index.
+    **/
     inline void switchRowIndex(int& a, int& b); 
 };
 
+/**
+Make a dungeon from a m by n matrix of healt gain/loss valus. Essentially just does conversion
+to 2D vector type. This function is for testing purposes.
+
+@param table Pointer to the beginning of the table (matrix). 
+@param m The number of rows.
+@param n The number of cols.
+@returns A 2D vector conversion of the matrix.
+**/
 std::vector<std::vector<int> > makeDungeon(int *table, int m, int n);
+
+/**
+Convert a dungeon row to a string. This is for testing purposes.
+
+@param dungeon Reference to the 2D vector representation of the dungeon.
+@returns The string representation of the dungeon gain/loss of life values.
+**/
 std::string makeStr(std::vector<std::vector<int> > &dungeon);
+
+/** 
+Convert a row to a string. This is for testing purposes.
+
+@param row The row to convert.
+@returns The string representing the row.
+**/
 std::string makeStr(std::vector<int> &row);
+
+////////////////////////////////////////
+////////// The main executable
+////////////////////////////////////////
 
 int main() {
 
@@ -52,6 +132,10 @@ int main() {
      
     return 0;
 }
+
+/////////////////////////////////////////////////
+////////// Function Definitions /////////////////
+/////////////////////////////////////////////////
 
 int Solution::calculateMinimumHP(std::vector<std::vector<int> >& dungeon) {
     
