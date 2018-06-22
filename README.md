@@ -38,3 +38,10 @@ exercises that may be found there:
 * Leet Code 605 Place Flowers
 * Leet Code 654 Max Binary Tree
 * Leet Code Work Ladder
+
+# Haskell Solutions
+
+The solutions to the exercises that are programmed in Haskell are in the [haskell/](haskell/) directory. Here is
+a list of the exercises that may be found there:
+
+* Reddit Daily Programmer 297 Parentheses Trees
