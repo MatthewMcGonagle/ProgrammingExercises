@@ -26,6 +26,7 @@ exercises that may be found there:
 * Leet Code 126 Word Ladder 2
 * Leet Code 133 Clone Graph
 * Leet Code 138 List Random Pointer
+* Leet Code 149 Max Points on a Line
 * Leet Code 169 Majority Element
 * Leet Code 174 Dungeon Game
 * Leet Code 208 Implement Trie
