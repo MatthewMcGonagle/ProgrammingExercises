@@ -11,7 +11,7 @@
     represent 7/5 = 1 + 2/5. So we only need to do a single division and modulo operation. No need to find
     gcd's. Then to compare, we just use convert to long and do cross-multiplication.
 
-    Solution Passes as being faster than 18.24% of all accepted cpp solutions (16 ms). So now real improvement
+    Solution Passes as being faster than 31.41% of all accepted cpp solutions (16 ms). So now real improvement
     over solution 2. Also, the use of long to keep track of cross-multiplication seems a little suspect as
     the exact size of int vs long is compiler dependent.
 **/
@@ -121,13 +121,14 @@ struct Rational {
 
 struct Line {
 
-    Rational coeff[3];
+    bool horizontal;
+    Rational coeff[2];
 
     Line(const Point& a, const Point& b);
 
     Line() { 
-        
-        for(int i = 0; i < 3; i++)
+        horizontal = true; 
+        for(int i = 0; i < 2; i++)
             coeff[i] = Rational(0);
     }
 
@@ -306,6 +307,11 @@ bool operator<(const Rational& lhs, const Rational& rhs) {
     if (lhs.intPart != rhs.intPart)
         return lhs.intPart < rhs.intPart;
 
+    // If one of the numerators is vanishing, then check is still simple.
+
+    if (lhs.num == 0 || rhs.num == 0)
+        return lhs.num < rhs.num;
+
     // Now we need to make the comparison at the fractional level using
     // cross multiplication.
 
@@ -333,16 +339,18 @@ void Line::enforceUniqueness(const int initCoeff[3]) {
 
     if(initCoeff[0] != 0) {
 
-        coeff[0] = Rational(1);
-       
-        for(int i = 1; i < 3; i++)
-            coeff[i] = Rational(initCoeff[i], initCoeff[0]);
+        //coeff[0] = Rational(1);
+        horizontal = false;
+        for(int i = 0; i < 2; i++)
+            coeff[i] = Rational(initCoeff[i+1], initCoeff[0]);
     }
     else {
 
-        coeff[0] = Rational(0);
-        coeff[1] = Rational(1);
-        coeff[2] = Rational(initCoeff[2], initCoeff[1]);
+        //coeff[0] = Rational(0);
+        horizontal = true;
+        //coeff[1] = Rational(1);
+        coeff[0] = Rational(initCoeff[2], initCoeff[1]);
+        coeff[1] = Rational(0);
     }
 }
 
@@ -351,7 +359,14 @@ bool operator<(const Line& lhs, const Line& rhs) {
 
     // Use a dictionary ordering for the coefficients.
 
-    for(int i = 0; i < 3; i++) {
+    if (lhs.horizontal ^ rhs.horizontal)
+        return lhs.horizontal;
+
+    // In either case of whether both lines are horizontal or non-horizontal, we
+    // can just use both coefficients to discriminate. If we are in the case of
+    // horizontal, then coefficient[0] should discriminate.
+ 
+    for(int i = 0; i < 2; i++) {
 
         if(lhs.coeff[i] < rhs.coeff[i])
             return true;
@@ -359,7 +374,7 @@ bool operator<(const Line& lhs, const Line& rhs) {
             return false;
     }
 
-    // If we made it this far then all coefficients are equal.
+    // If we made it this far then everything is the same, so we have equality. 
 
     return false;
 }
@@ -379,8 +394,13 @@ ostream& operator<<(ostream& os, const MultiPoint& mp) {
 
 ostream& operator<<(ostream& os, const Line& l) {
 
-    os << "( " << l.coeff[0] << " ) x + ( " << l.coeff[1] << " ) y + "
-       << l.coeff[2] << " = 0";    
+    if (l.horizontal)
+        os << "0 x + ( ";
+    else
+        os << "1 x + ( ";
+
+    os << l.coeff[0] << " ) y + "  
+       << l.coeff[1] << " = 0";    
 
     return os;
 }
