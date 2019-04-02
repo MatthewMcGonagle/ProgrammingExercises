@@ -11,13 +11,13 @@ class Solution(object):
         :rtype: int
         """
 
-        if not root:
+        if root is None:
             return 0
 
         return self._max_subtree_depth(root) 
 
     def _max_subtree_depth(self, sub_root):
-        sub_tree_depths = [ self._max_subtree_depth(child) if child 
+        sub_tree_depths = [ self._max_subtree_depth(child) if child is not None 
                             else 0
                             for child in [sub_root.left, sub_root.right]] 
         
