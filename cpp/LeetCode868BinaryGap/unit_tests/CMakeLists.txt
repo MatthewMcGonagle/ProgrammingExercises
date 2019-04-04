@@ -1,0 +1,13 @@
+enable_testing()
+add_executable(TestSolution test_solution.cpp)
+target_link_libraries (TestSolution Solution)
+add_test(Solution1011000101 TestSolution 1011000101 4) 
+add_test(Solution1010000 TestSolution 1010000 2)
+add_test(Solution1100 TestSolution 1100 1)
+add_test(Solution1000 TestSolution 1000 0)
+
+add_executable(TestRemoveLeadingZeros test_remove_leading_zeros.cpp)
+target_link_libraries (TestRemoveLeadingZeros Solution)
+add_test(RemoveLeadingZeros1101110000 TestRemoveLeadingZeros 1101110000 110111)
+add_test(RemoveLeadingZeros1111 TestRemoveLeadingZeros 1111 1111)
+add_test(RemoveLeadingZeros1010010 TestRemoveLeadingZeros 1010010 101001)
