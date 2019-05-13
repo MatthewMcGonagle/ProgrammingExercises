@@ -1,7 +1,12 @@
 # Programming Exercises
 
 The purpose of this project is to be a collection of solutions to programming exercises.
-The solutions are split into directories based on language.
+The solutions are split into directories based on language:
+
+* [C++](cpp/)
+* [MySQL](mysql/)
+* [Haskell](haskell/)
+
 In particular, there are many C++ solutions to problems from [Leet Code](https://leetcode.com/) in the directory [/cpp/](https://github.com/MatthewMcGonagle/ProgrammingExercises/tree/master/cpp). 
 
 The solutions are self-contained. They will compile to create executables for testing; this is despite the fact that Leet Code only requires one to implement individual class member functions.
@@ -39,6 +44,16 @@ exercises that may be found there:
 * Leet Code 605 Place Flowers
 * Leet Code 654 Max Binary Tree
 * Leet Code Work Ladder
+
+# MySQL Solutions
+
+* Leet Code 181 Employees Earning More Than Their Managers
+* Leet Code 182 Duplicate Emails
+* Leet Code 197 Rising Temperature
+* Leet Code 595 Big Countries
+* Leet Code 620 Not Boring Movies
+* Leet Code 626 Exchange Seats
+* Leet Code 627 Swap Salary 
 
 # Haskell Solutions
 
